@@ -52,8 +52,6 @@ def initdb(drop):
     click.echo('Initialized database.')  # 输出提示信息
 
 
-
-
 @app.cli.command()
 def forge():
     """Generate fake data."""
@@ -84,12 +82,34 @@ def forge():
     click.echo('Done.')
 
 
+'''
+对于多个模板内都需要使用的变量，我们可以使用 app.context_processor 装饰器注册一个模板上下文处理函数
+'''
+
+
+@app.context_processor
+def inject_user():  # 函数名可以随意修改
+    user = User.query.first()
+    return dict(user=user)  # 需要返回字典，等同于 return {'user': user}
+
+
+'''
+使用 app.errorhandler() 装饰器注册一个错误处理函数，它的作用和视图函数类似，当 404 错误发生时，这个函数会被触发，返回值会作为响应主体返回给客户端
+'''
+
+
+@app.errorhandler(404)  # 传入要处理的错误代码
+def page_not_found(e):  # 接受异常对象作为参数
+    user = User.query.first()
+    return render_template('404.html'), 404  # 返回模板和状态码
+
+
 @app.route('/')
 def index():  # put application's code here
-    user = User.query.first()   # read data for user
+    user = User.query.first()  # read data for user
     movies = Movie.query.all()  # read data for movie
     # return '<h1>Hello Totoro!</h1><img src="http://helloflask.com/totoro.gif">'
-    return render_template('index.html', user=user, movies=movies)
+    return render_template('index.html', movies=movies)
 
 
 @app.route('/user/<name>')
