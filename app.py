@@ -19,8 +19,6 @@ movies = [
 
 
 @app.route('/')
-@app.route('/index')
-@app.route('/home')
 def index():  # put application's code here
     # return '<h1>Hello Totoro!</h1><img src="http://helloflask.com/totoro.gif">'
     return render_template('index.html', name=name, movies=movies)
