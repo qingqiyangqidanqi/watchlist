@@ -1,4 +1,4 @@
-from app import db, User, Movie  # 导入模型类
+from watchlist.app import db, User, Movie  # 导入模型类
 
 
 def create():
