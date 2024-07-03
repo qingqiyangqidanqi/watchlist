@@ -2,7 +2,7 @@
 import click
 
 from watchlist import app, db
-from watchlist.models import User, Movie
+from watchlist.models import User, Movie, Comment
 
 '''
 终端执行 flask initdb 命令就可以创建数据库表
@@ -39,13 +39,15 @@ def forge():
         {'title': 'WALL-E', 'year': '2008'},
         {'title': 'The Pork of Music', 'year': '2012'},
     ]
+    message = "This is a message for test."
 
     user = User(name=name)
     db.session.add(user)
     for m in movies:
         movie = Movie(title=m['title'], year=m['year'])
         db.session.add(movie)
-
+    comment = Comment(name=name, message=message)
+    db.session.add(comment)
     db.session.commit()
     click.echo('Done.')
 
@@ -54,7 +56,7 @@ def forge():
 @click.option('--username', prompt=True, help='The username used to login.')
 @click.option('--password', prompt=True, hide_input=True, confirmation_prompt=True, help='The password used to login.')
 def admin(username, password):
-    """Create user."""
+    """Create a new user."""
     db.create_all()
 
     user = User.query.first()

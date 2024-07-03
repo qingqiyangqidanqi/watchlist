@@ -5,7 +5,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from watchlist import db
 
 
-class User(db.Model, UserMixin):  # 表名将会是 user（自动生成，小写处理）
+class User(db.Model, UserMixin):
+    # __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)  # 主键
     name = db.Column(db.String(20))  # 名字
     username = db.Column(db.String(20))
@@ -18,7 +19,15 @@ class User(db.Model, UserMixin):  # 表名将会是 user（自动生成，小写
         return check_password_hash(self.password_hash, password)
 
 
-class Movie(db.Model):  # 表名将会是 movie
+class Movie(db.Model):
+    # __tablename__ = 'movie'
     id = db.Column(db.Integer, primary_key=True)  # 主键
     title = db.Column(db.String(60))  # 电影标题
     year = db.Column(db.String(4))  # 电影年份
+
+
+class Comment(db.Model):
+    # __tablename__ = 'comment'
+    id = db.Column(db.Integer, primary_key=True)  # 主键
+    name = db.Column(db.String(20))  # 名字
+    message = db.Column(db.Text)

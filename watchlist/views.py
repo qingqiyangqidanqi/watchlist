@@ -2,8 +2,8 @@
 from flask import url_for, render_template, request, redirect, flash
 from flask_login import login_user, login_required, current_user, logout_user
 
-from watchlist import app, db
-from watchlist.models import User, Movie
+from watchlist import app, db, inject_user
+from watchlist.models import User, Movie, Comment
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -24,6 +24,27 @@ def index():  # put application's code here
         return redirect(url_for('index'))
     movies = Movie.query.all()  # read data for movie
     return render_template('index.html', movies=movies)
+
+
+@app.route('/comments', methods=['GET', 'POST'])
+def comment():  # comment for user
+    if request.method == 'POST':
+        if not current_user.is_authenticated:
+            return redirect(url_for('comment'))
+        name = current_user.name
+        message = request.form.get('message')
+        code = request.form.get('code')
+        if not name or not message or code != "宝塔镇河妖":
+            flash('Invalid input，second input is 宝塔镇河妖')
+            return redirect(url_for('comment'))
+        # save data to database
+        comment = Comment(name=name, message=message)
+        db.session.add(comment)
+        db.session.commit()
+        flash('Comment successfully!')
+        return redirect(url_for('comment'))
+    comments = Comment.query.all()
+    return render_template('comment.html', comments=comments)
 
 
 @app.route('/movie/edit/<int:movie_id>', methods=['GET', 'POST'])
